@@ -1,0 +1,26 @@
+#INLA code using M3F3 as an example. Note that for the different fits we
+#altered the param= statement in the formula as well as the strategy= 
+#statement in the INLA call. Furthermore, we only show how to access 
+#y_pred and yhat
+
+n=159
+id=c(1:n,1:n)
+id2=id
+id3=id
+ 
+data=list(y3=c(y[1:n,3],rep(NA,n)),
+  	x1=c(x[1:n,1],x[1:159,1])-mean(x[1:n,1]),
+  	x2=c(x[1:n,2],x[1:159,2])-mean(x[1:n,2]))
+
+form3=y3~1+x1+x2+f(id,model="iid",param=c(1,.5))+
+f(id2,model="besag",graph="adjGA_INLA.txt",param=c(1,.5))+
+f(id3,model="iid")
+resM3<-inla(form3,family="poisson",data=data3,
+	control.compute   = list(dic=TRUE, mlik=TRUE,cpo=TRUE),
+	control.fixed     = list(prec.intercept = 1, prec = 1),
+	control.predictor = list(compute=TRUE),
+	control.inla      = list(strategy = "laplace"))
+
+
+yhat=resM3$summary.fitted.values[1:n,1]
+ypred=resM3$summary.fitted.values[(n+1):(2*n),1]

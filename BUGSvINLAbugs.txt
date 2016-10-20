@@ -1,0 +1,70 @@
+model{
+for (i in 1:159){
+x1c[i]<-x1[i]-mean(x1[])
+x2c[i]<-x2[i]-mean(x2[])
+x3c[i]<-x3[i]-mean(x3[])
+	
+	y1[i]~dpois(mu1[i])
+	mu1[i]<-e[i]*theta1[i]
+	log(theta1[i])<-a1[1]+a1[2]*x1c[i]+a1[3]*x2c[i]
+	y1.pred[i]~dpois(mu1[i])
+	
+	y2[i]~dpois(mu2[i])
+	mu2[i]<-e[i]*theta2[i]
+	log(theta2[i])<-a2[1]+a2[2]*x1c[i]+a2[3]*x2c[i]+u2[i]
+	u2[i]~dnorm(0,tauu2)
+	y2.pred[i]~dpois(mu2[i])
+	
+	y3[i]~dpois(mu3[i])
+	mu3[i]<-e[i]*theta3[i]
+	log(theta3[i])<-a3[1]+a3[2]*x1c[i]+a3[3]*x2c[i]+u3[i]+v3[i]
+	u3[i]~dnorm(0,tauu3)
+	y3.pred[i]~dpois(mu3[i])
+
+	y4[i]~dpois(mu4[i])
+	mu4[i]<-e[i]*theta4[i]
+	log(theta4[i])<-a4[1]+a4[2]*x1c[i]+a4[3]*x2c[i]+a4[4]*x3c[i]+a4[5]*x4[i]
+	y4.pred[i]~dpois(mu4[i])
+
+	y5[i]~dpois(mu5[i])
+	mu5[i]<-e[i]*theta5[i]
+	log(theta5[i])<-a5[1]+a5[2]*x1c[i]+a5[3]*x2c[i]+a5[4]*x3c[i]+a5[5]*x4[i]+u5[i]+v5[i]
+	u5[i]~dnorm(0,tauu5)
+	y5.pred[i]~dpois(mu5[i])
+	
+	y6[i]~dpois(mu6[i])
+	mu6[i]<-e[i]*theta6[i]
+	log(theta6[i])<-a6[1]+u6[i]+v6[i]
+	u6[i]~dnorm(0,tauu6)
+	y6.pred[i]~dpois(mu6[i])
+
+	e[i]<-1
+	}
+for (j in 1:3){
+	a1[j]~dnorm(0,taua)
+	a2[j]~dnorm(0,taua)
+	a3[j]~dnorm(0,taua)
+	}
+for (k in 1:5){
+	a4[k]~dnorm(0,taua)
+	a5[k]~dnorm(0,taua)
+	}
+a6[1]~dnorm(0,taua)
+	
+taua<-1
+
+tauu2~dgamma(1,.5)
+tauu3~dgamma(1,.5)
+tauu5~dgamma(1,.5)
+tauu6~dgamma(1,.5)
+tau3  ~dgamma(1,.5)
+tau5  ~dgamma(1,.5)
+tau6  ~dgamma(1,.5)
+
+v3[1:159]~car.normal(adj[],weights[],num[],tau3)
+v5[1:159]~car.normal(adj[],weights[],num[],tau5)
+v6[1:159]~car.normal(adj[],weights[],num[],tau6)
+for(l in 1:sumNumNeigh){
+	weights[l]<-1
+	}
+}

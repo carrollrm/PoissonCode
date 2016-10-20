@@ -1,0 +1,42 @@
+model{
+for (i in 1:159){
+x1c[i]<-x1[i]-mean(x1[])
+x2c[i]<-x2[i]-mean(x2[])
+x3c[i]<-x3[i]-mean(x3[])
+	y[i]~dpois(mu[i])
+	mu[i]<-e[i]*theta[i]
+	log(theta[i])<- w[1,i]*(psi[1]+psi[2]*a[1]*x1c[i]+psi[3]*a[2]*x2c[i]+psi[4]*a[3]*x3c[i]+
+				psi[5]*a[4]*x4[i]+a[5]*u[i])+
+			w[2,i]*(psi[6]+psi[7]*a[6]*x1c[i]+psi[8]*a[7]*x2c[i]+psi[9]*a[8]*x3c[i]+
+				psi[10]*a[9]*x4[i]+a[10]*u[i])+
+			w[3,i]*(psi[11]+psi[12]*a[11]*x1c[i]+psi[13]*a[12]*x2c[i]+psi[14]*a[13]*x3c[i]+
+				psi[15]*a[14]*x4[i]+a[15]*u[i])
+	u[i]~dnorm(0,tauu)
+	y.pred[i]~dpois(mu[i])
+#create threshold for weights
+	for (j in 1:3){
+		w[j,i]~dbern(z[j,i])
+		z[j,i]<-exp(lz[j,i])/(1+exp(lz[j,i]))
+		}
+	z1[i]<-z[1,i]
+	z2[i]<-z[2,i]
+	z3[i]<-z[3,i]
+	}	
+for (j in 1:3){
+	lz[j,1:159]~car.normal(adj[],weights[],num[],tauz[j,1:159])
+	for (i in 1:159){
+		tauz[j,i]<-pow(sdz[j,i],-2)
+		sdz[j,i]~dunif(0,10)
+	}}
+for (i in 1:15){
+	psi[i]~dnorm(0,taupsi)
+	}
+taupsi<-1
+tauu~dgamma(1,.5)	
+z1m<-mean(z[1,])
+z2m<-mean(z[2,])
+z3m<-mean(z[3,])
+for(l in 1:sumNumNeigh){
+	weights[l]<-1
+	}
+}
